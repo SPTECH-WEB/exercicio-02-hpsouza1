@@ -1,65 +1,30 @@
-
 # 📦 Sistema de Cálculo de Frete com Padrões de Projeto
 
 ## 🔍 Visão Geral
-Projeto Java que implementa:
-- **Strategy Pattern** para múltiplas formas de cálculo de frete
-- **Adapter Pattern** para integração com API externa
-- **Observer Pattern** para notificações
+Projeto Java que implementa três padrões de projeto principais:
+1. **Strategy**: Para diferentes algoritmos de cálculo de frete
+2. **Adapter**: Para integração com API externa de transportadora
+3. **Observer**: Para sistema de notificações
 
-## 🏗️ Diagrama de Componentes
-```mermaid
-classDiagram
-    class FreteController {
-        +calcular(Double peso, String modalidade)
-    }
-    
-    class FreteService {
-        -List<FreteStrategy> estrategias
-        -List<Notificador> notificadores
-        +calcularFrete()
-    }
-    
-    interface FreteStrategy {
-        <<interface>>
-        +calcularFrete(double peso)
-        +modalidade() String
-    }
-    
-    class EntregaExpressa {
-        +calcularFrete()
-        +modalidade()
-    }
-    
-    class EntregaEconomica {
-        +calcularFrete()
-        +modalidade()
-    }
-    
-    class TransportadoraTercerizadaAdapter {
-        -APIExternaTransportadora apiExterna
-        +calcularFrete()
-        +modalidade()
-    }
-    
-    class APIExternaTransportadora {
-        +calculoExterno(double peso)
-    }
-    
-    interface Notificador {
-        <<interface>>
-        +notificar(String mensagem)
-    }
-    
-    class EmailNotificador {
-        +notificar(String mensagem)
-    }
-    
-    FreteController --> FreteService
-    FreteService --> FreteStrategy
-    FreteService --> Notificador
-    FreteStrategy <|-- EntregaExpressa
-    FreteStrategy <|-- EntregaEconomica
-    FreteStrategy <|-- TransportadoraTercerizadaAdapter
-    TransportadoraTercerizadaAdapter --> APIExternaTransportadora
-    Notificador <|-- EmailNotificador
+## 🏗️ Estrutura dos Componentes
+
+### 1. Componentes Principais
+- **FreteController** (Ponto de entrada REST)
+  - Recebe requisições HTTP
+  - Parâmetros: `peso` (Double) e `modalidade` (String)
+  - Delega cálculos para o `FreteService`
+
+- **FreteService** (Núcleo do sistema)
+  - Gerencia estratégias de cálculo (Strategy)
+  - Administra notificadores (Observer)
+  - Contém:
+    - Lista de estratégias (`EntregaExpressa`, `EntregaEconomica`, `TransportadoraTercerizadaAdapter`)
+    - Lista de notificadores (`EmailNotificador`)
+
+### 2. Hierarquia de Estratégias (Strategy Pattern)
+**Interface Base:**
+```java
+public interface FreteStrategy {
+    double calcularFrete(double peso);
+    String modalidade();
+}
